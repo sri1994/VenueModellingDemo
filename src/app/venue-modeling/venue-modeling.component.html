@@ -1,0 +1,133 @@
+<p class="logoLabel">Venue Modelling and Object creation</p>
+
+<div class="main_scene">
+    <div #rendererContainer>
+    </div>
+    <div class="shapes-group">
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select shape
+                <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li *ngFor="let shape of geometryShapes" (click)="onDropdownChanged(shape)"><a>{{ shape }}</a></li>
+            </ul>
+        </div>
+        <br>
+        <div *ngIf="isCubeSelected">
+            <form [formGroup]="cubeDimensionForm">
+                <div>
+                    <h4 style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                </div>
+                <div class="form-group">
+                    <label for="width">Width:</label>
+                    <input formControlName="width" class="form-control" type="number" placeholder="width">
+                </div>
+                <div class="form-group">
+                    <label for="height">height:</label>
+                    <input formControlName="height" class="form-control" type="number" placeholder="height">
+                </div>
+                <div class="form-group">
+                    <label for="depth">depth:</label>
+                    <input formControlName="depth" class="form-control" type="number" placeholder="depth">
+                </div>
+                <div><button
+                        (click)="createCube(cubeDimensionForm.get('width').value, cubeDimensionForm.get('height').value, cubeDimensionForm.get('depth').value)"
+                        class="btn btn-success" [disabled]="cubeDimensionForm.invalid" type="button">Create</button>
+                </div>
+            </form>
+        </div>
+
+        <div *ngIf="isSphereSelected">
+            <form [formGroup]="sphereDimensionForm">
+                <div>
+                    <h4 style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                </div>
+                <div class="form-group">
+                    <label for="radius">Radius:</label>
+                    <input formControlName="radius" class="form-control" type="number" placeholder="radius">
+                </div>
+                <div class="form-group">
+                    <label for="widthSegments">Width segments:</label>
+                    <input formControlName="widthSegments" class="form-control" type="number"
+                        placeholder="widthSegments">
+                </div>
+                <div class="form-group">
+                    <label for="heightSegments">Height segments:</label>
+                    <input formControlName="heightSegments" class="form-control" type="number"
+                        placeholder="heightSegments">
+                </div>
+                <div><button
+                        (click)="createSphere(sphereDimensionForm.get('radius').value, sphereDimensionForm.get('widthSegments').value, sphereDimensionForm.get('heightSegments').value)"
+                        class="btn btn-success" [disabled]="sphereDimensionForm.invalid" type="button">Create</button>
+                </div>
+            </form>
+        </div>
+
+        <div *ngIf="isTrapezoidSelected">
+            <form [formGroup]="trapezoidDimensionForm">
+                <!-- radiusTop : Float, radiusBottom : Float, height : Float, radialSegments : Integer, heightSegments :
+                Integer, -->
+                <div>
+                    <h4 style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                </div>
+                <div class="form-group">
+                    <label for="radius">radiusTop:</label>
+                    <input formControlName="radiusTop" class="form-control" type="number" placeholder="radiusTop">
+                </div>
+                <div class="form-group">
+                    <label for="radiusBottom">radiusBottom:</label>
+                    <input formControlName="radiusBottom" class="form-control" type="number"
+                        placeholder="radiusBottom">
+                </div>
+                <div class="form-group">
+                    <label for="height">height:</label>
+                    <input formControlName="height" class="form-control" type="number"
+                        placeholder="height">
+                </div>
+                <div class="form-group">
+                    <label for="radialSegments">radial segments:</label>
+                    <input formControlName="radialSegments" class="form-control" type="number"
+                        placeholder="radialSegments">
+                </div>
+                <div class="form-group">
+                    <label for="heightSegments">height segments:</label>
+                    <input formControlName="heightSegments" class="form-control" type="number"
+                        placeholder="heightSegments">
+                </div>
+                <div><button
+                        (click)="createTrapezoid(trapezoidDimensionForm.get('radiusTop').value, trapezoidDimensionForm.get('radiusBottom').value, trapezoidDimensionForm.get('height').value, trapezoidDimensionForm.get('radialSegments').value, trapezoidDimensionForm.get('heightSegments').value)"
+                        class="btn btn-success" [disabled]="trapezoidDimensionForm.invalid" type="button">Create</button>
+                </div>
+            </form>
+        </div>
+
+        <div *ngIf="isHelperSelected">
+            <form [formGroup]="helperGridDimensionForm">
+                <div>
+                    <h4 style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                </div>
+                <div class="form-group">
+                    <label for="size">Size:</label>
+                    <input formControlName="size" class="form-control" type="number" placeholder="size">
+                </div>
+                <div class="form-group">
+                    <label for="divisions">divisions:</label>
+                    <input formControlName="divisions" class="form-control" type="number" placeholder="divisions">
+                </div>
+                <div><button
+                        (click)="createHelperGrid(helperGridDimensionForm.get('size').value, helperGridDimensionForm.get('divisions').value)"
+                        class="btn btn-success" [disabled]="helperGridDimensionForm.invalid"
+                        type="button">Create</button>
+                </div>
+            </form>
+        </div>
+        <div>
+            <h3 style="color: Black;">TODO</h3>
+
+            <h4 style="color: green">1) User controlled dimension input.</h4>
+
+            <h4 style="color: green">2) Find distance.</h4>
+
+            <h4 style="color: green">3) Generate Heat Map.</h4>
+        </div>
+    </div>
+</div>
