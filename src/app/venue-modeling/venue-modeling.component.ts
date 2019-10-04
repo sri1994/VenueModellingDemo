@@ -111,6 +111,24 @@ export class VenueModelingComponent {
 			this.orbitControls.enabled = true;
 			console.log('controls :', this.orbitControls);
 		});
+		const page = document.getElementById('main-canvas');
+		const menu = document.getElementById('menu');
+
+		page.addEventListener('contextmenu', function (e: any) {
+			e.preventDefault();
+			menu.style.display = 'block';
+			menu.style.position = 'absolute';
+			menu.style.top = e.clientY + 'px';
+			menu.style.left = e.clientX + 'px';
+
+		});
+
+		page.addEventListener('click', function (e) {
+			console.log(e);
+			e.preventDefault();
+			menu.style.display = "none";
+		})
+
 
 		this.animate();
 
