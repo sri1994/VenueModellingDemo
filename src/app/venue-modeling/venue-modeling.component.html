@@ -34,7 +34,8 @@
         <div *ngIf="isCubeSelected">
             <form [formGroup]="cubeDimensionForm">
                 <div>
-                    <h4 style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                    <h4 *ngIf="!isEditCubeObject" style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                    <h4 *ngIf="isEditCubeObject" style="color: green">Edit {{ getFormattedObjectName(editableObject?.name) }}</h4>
                 </div>
                 <div class="form-group">
                     <label for="width">Width:</label>
@@ -48,9 +49,11 @@
                     <label for="depth">depth:</label>
                     <input formControlName="depth" class="form-control" type="number" placeholder="depth">
                 </div>
-                <div><button
+                <div><button *ngIf="!isEditCubeObject"
                         (click)="createCube(cubeDimensionForm.get('width').value, cubeDimensionForm.get('height').value, cubeDimensionForm.get('depth').value)"
                         class="btn btn-success" [disabled]="cubeDimensionForm.invalid" type="button">Create</button>
+                    <button *ngIf="isEditCubeObject" (click)="editObject()" class="btn btn-success"
+                        [disabled]="cubeDimensionForm.invalid" type="button">Edit</button>
                 </div>
             </form>
         </div>
@@ -58,7 +61,8 @@
         <div *ngIf="isSphereSelected">
             <form [formGroup]="sphereDimensionForm">
                 <div>
-                    <h4 style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                    <h4 *ngIf="!isEditSphereObject" style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                    <h4 *ngIf="isEditSphereObject" style="color: green">Edit {{ getFormattedObjectName(editableObject?.name) }}</h4>
                 </div>
                 <div class="form-group">
                     <label for="radius">Radius:</label>
@@ -74,9 +78,11 @@
                     <input formControlName="heightSegments" class="form-control" type="number"
                         placeholder="heightSegments">
                 </div>
-                <div><button
+                <div><button *ngIf="!isEditSphereObject"
                         (click)="createSphere(sphereDimensionForm.get('radius').value, sphereDimensionForm.get('widthSegments').value, sphereDimensionForm.get('heightSegments').value)"
                         class="btn btn-success" [disabled]="sphereDimensionForm.invalid" type="button">Create</button>
+                    <button *ngIf="isEditSphereObject" (click)="editObject()" class="btn btn-success"
+                        [disabled]="sphereDimensionForm.invalid" type="button">Edit</button>
                 </div>
             </form>
         </div>
@@ -86,7 +92,9 @@
                 <!-- radiusTop : Float, radiusBottom : Float, height : Float, radialSegments : Integer, heightSegments :
                 Integer, -->
                 <div>
-                    <h4 style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                    <h4 *ngIf="!isEditTrapezoidObject" style="color: green">Specify dimensions for {{ selectedShape }}
+                    </h4>
+                    <h4 *ngIf="isEditTrapezoidObject" style="color: green">Edit {{ getFormattedObjectName(editableObject?.name) }}</h4>
                 </div>
                 <div class="form-group">
                     <label for="radius">radiusTop:</label>
@@ -94,13 +102,11 @@
                 </div>
                 <div class="form-group">
                     <label for="radiusBottom">radiusBottom:</label>
-                    <input formControlName="radiusBottom" class="form-control" type="number"
-                        placeholder="radiusBottom">
+                    <input formControlName="radiusBottom" class="form-control" type="number" placeholder="radiusBottom">
                 </div>
                 <div class="form-group">
                     <label for="height">height:</label>
-                    <input formControlName="height" class="form-control" type="number"
-                        placeholder="height">
+                    <input formControlName="height" class="form-control" type="number" placeholder="height">
                 </div>
                 <div class="form-group">
                     <label for="radialSegments">radial segments:</label>
@@ -112,9 +118,12 @@
                     <input formControlName="heightSegments" class="form-control" type="number"
                         placeholder="heightSegments">
                 </div>
-                <div><button
+                <div><button *ngIf="!isEditTrapezoidObject"
                         (click)="createTrapezoid(trapezoidDimensionForm.get('radiusTop').value, trapezoidDimensionForm.get('radiusBottom').value, trapezoidDimensionForm.get('height').value, trapezoidDimensionForm.get('radialSegments').value, trapezoidDimensionForm.get('heightSegments').value)"
-                        class="btn btn-success" [disabled]="trapezoidDimensionForm.invalid" type="button">Create</button>
+                        class="btn btn-success" [disabled]="trapezoidDimensionForm.invalid"
+                        type="button">Create</button>
+                    <button *ngIf="isEditTrapezoidObject" (click)="editObject()" class="btn btn-success"
+                        [disabled]="trapezoidDimensionForm.invalid" type="button">Edit</button>
                 </div>
             </form>
         </div>
@@ -122,7 +131,8 @@
         <div *ngIf="isHelperSelected">
             <form [formGroup]="helperGridDimensionForm">
                 <div>
-                    <h4 style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                    <h4 *ngIf="!isEditHelperObject" style="color: green">Specify dimensions for {{ selectedShape }}</h4>
+                    <h4 *ngIf="isEditHelperObject" style="color: green">Edit {{ getFormattedObjectName(editableObject?.name) }}</h4>
                 </div>
                 <div class="form-group">
                     <label for="size">Size:</label>
@@ -132,21 +142,14 @@
                     <label for="divisions">divisions:</label>
                     <input formControlName="divisions" class="form-control" type="number" placeholder="divisions">
                 </div>
-                <div><button
+                <div><button *ngIf="!isEditHelperObject"
                         (click)="createHelperGrid(helperGridDimensionForm.get('size').value, helperGridDimensionForm.get('divisions').value)"
                         class="btn btn-success" [disabled]="helperGridDimensionForm.invalid"
                         type="button">Create</button>
+                    <button *ngIf="isEditHelperObject" (click)="editObject()" class="btn btn-success"
+                        [disabled]="helperGridDimensionForm.invalid" type="button">Edit</button>
                 </div>
             </form>
-        </div>
-        <div>
-            <h3 style="color: Black;">TODO</h3>
-
-            <h4 style="color: green">1) User controlled dimension input.</h4>
-
-            <h4 style="color: green">2) Find distance.</h4>
-
-            <h4 style="color: green">3) Generate Heat Map.</h4>
         </div>
     </div>
 </div>
