@@ -1,7 +1,8 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnChanges } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import * as THREE from 'three-full';
-import { randomBates } from 'd3';
+
+import { GeometryService } from './../geometry.service';
 
 // import DragControls from 'three-dragcontrols';
 // import OrbitControls from 'three-orbitcontrols';
@@ -21,6 +22,7 @@ export class VenueModelingComponent {
   private objectShapes: any[] = [];
   private grid: any;
   public orbitControls: any;
+  public dragControls: any;
   private draggableObjectsArray: any[] = [];
   public previousColor: any;
   public geometryShapes: any[];
@@ -49,7 +51,10 @@ export class VenueModelingComponent {
   position1: any;
   position2: any;
 
-  public constructor() {
+  public templateGroups: any[] = [];
+
+  public flightData: any = '';
+  public constructor(private geometryService: GeometryService) {
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
 
     this.camera.position.set(0, 0, 10);
@@ -100,24 +105,29 @@ export class VenueModelingComponent {
     this.isSphereSelected = false;
   }
 
+  public ngOnInit(): void {
+    
+  }
+
   public ngAfterViewInit(): void {
     this.renderer.setSize(900, 400);
 
-    this.renderer.setClearColor(0x000000);
+    this.renderer.setClearColor(0x111555);
 
     this.rendererContainer.nativeElement.appendChild(this.renderer.domElement);
 
     this.orbitControls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
-    const dragControls = new THREE.DragControls(this.draggableObjectsArray, this.camera, this.renderer.domElement);
+    this.dragControls = new THREE.DragControls(this.draggableObjectsArray, this.camera, this.renderer.domElement);
 
-    dragControls.addEventListener('dragstart', (event: any) => {
+    this.dragControls.addEventListener('dragstart', (event: any) => {
+      console.log('DraggableArray :', this.draggableObjectsArray);
       console.log('DragStartEvent: ', event);
       this.orbitControls.enabled = false;
       console.log('SCENE :', this.scene);
       console.log('controls :', this.orbitControls);
-    });
-    dragControls.addEventListener('dragend', (event: any) => {
+    }, true);
+    this.dragControls.addEventListener('dragend', (event: any) => {
       console.log('DragEndEvent :', event);
       this.orbitControls.enabled = true;
       console.log('controls :', this.orbitControls);
@@ -247,11 +257,12 @@ export class VenueModelingComponent {
 
         this.isEditSphereObject = true;
       }
-    });
+    }, true);
+
     const page = document.getElementById('main-canvas');
     const menu = document.getElementById('menu');
 
-    page.addEventListener('contextmenu', function(e: any) {
+    page.addEventListener('contextmenu', function (e: any) {
       e.preventDefault();
       menu.style.display = 'block';
       menu.style.position = 'absolute';
@@ -259,7 +270,7 @@ export class VenueModelingComponent {
       menu.style.left = e.clientX + 'px';
     });
 
-    page.addEventListener('click', function(e) {
+    page.addEventListener('click', function (e) {
       console.log(e);
       e.preventDefault();
       menu.style.display = 'none';
@@ -319,7 +330,7 @@ export class VenueModelingComponent {
       var vertices = [],
         colors = [];
 
-      for (var i = 0, j = 0, k = -halfSize; i <= divisions; i++, k += step) {
+      for (var i = 0, j = 0, k = -halfSize; i <= divisions; i++ , k += step) {
         vertices.push(-halfSize, 0, k, halfSize, 0, k);
         vertices.push(k, 0, -halfSize, k, 0, halfSize);
 
@@ -436,6 +447,7 @@ export class VenueModelingComponent {
    *
    */
   public createCube(width: any, height: any, depth: any): void {
+    this.dragControls.activate();
     const cube = new THREE.Mesh(
       new THREE.BoxGeometry(width, height, depth, 5, 5, 5),
       new THREE.MeshBasicMaterial({
@@ -552,6 +564,44 @@ export class VenueModelingComponent {
     });
   }
 
+  createGroup() {
+
+    this.dragControls.deactivate();
+
+    const group = new THREE.Group();
+
+    this.draggableObjectsArray.forEach((obj1: any) => {
+      group.add(obj1);
+    });
+
+    this.scene.add(group);
+
+    console.log('GROUP CREATED :', group);
+
+    group.name = "Template - " + Math.random().toFixed(2);
+
+    // const tempGroup: any = JSON.parse(JSON.stringify(group));
+
+    this.geometryService.groups.push(group);
+
+    this.templateGroups = this.geometryService.groups;
+
+    this.deleteGroup(group.name);
+
+    console.log('SERVICE GROUP :', this.geometryService.groups);
+
+  }
+
+  onTemplateChanged(template: any): void {
+    console.log('template :', template);
+    template.children = this.geometryService.groupChildrenMap[template.name];
+    this.scene.add(template);
+    // template.children.forEach(child => {
+    //   this.draggableObjectsArray.push(child);
+    // });
+    this.dragControls.activate();
+  }
+
   selectedShape2(selectedShape) {
     this.object2 = selectedShape;
 
@@ -560,5 +610,33 @@ export class VenueModelingComponent {
         this.position2 = geometry.position;
       }
     });
+  }
+
+  deleteGroup(groupName: any): void {
+    const childrenObjectsToRemove: any[] = [];
+    console.log('SCENE :', this.scene);
+    this.scene.children.forEach((child) => {
+      console.log('CHILD CHILDREN :', child.children);
+      // const refArray = child.children;
+      // const clonedArray = [...refArray];
+      const tempArray: any[] = [];
+      console.log('JSON.stringify(child.children) :', JSON.parse(JSON.stringify(child.children)));
+      child.children.forEach((childObj: any) => {
+        const clonedObj = childObj.clone();
+        tempArray.push(clonedObj);
+      });
+      console.log('TEMPARRAY :', tempArray);
+      // JSON.parse(JSON.stringify(child.children));
+      this.geometryService.groupChildrenMap[groupName] = tempArray;
+    });
+    this.scene.traverse((child: any) => {
+      console.log('CHILD :', child);
+      childrenObjectsToRemove.push(child);
+    });
+    childrenObjectsToRemove.forEach((child: any) => {
+      this.scene.remove(child);
+    });
+    console.log('groupChildrenMap :', this.geometryService.groupChildrenMap);
+    // this.draggableObjectsArray = [];
   }
 }

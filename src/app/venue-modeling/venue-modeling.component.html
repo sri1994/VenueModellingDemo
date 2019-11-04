@@ -1,4 +1,5 @@
 <p class="logoLabel">Venue Modelling and Object creation</p>
+
 <div id="menu" style="border: 1px solid #ddd;background: #eee;">
     <ul>
         <li>Copy</li>
@@ -23,6 +24,18 @@
     <div #rendererContainer id="main-canvas">
     </div>
     <div class="shapes-group">
+        <div>
+            <button class="btn btn-primary" (click)="createGroup()">Create group</button>
+        </div>
+        <br>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select Template
+                <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+                <li *ngFor="let template of geometryService.groups" (click)="onTemplateChanged(template)"><a>{{ template?.name }}</a></li>
+            </ul>
+        </div>
+        <br>
         <div class="dropdown">
             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select shape
                 <span class="caret"></span></button>
@@ -197,3 +210,4 @@
     </div>
 
 </div>
+
