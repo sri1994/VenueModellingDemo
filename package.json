@@ -27,7 +27,7 @@
     "drag-controls": "^1.0.4",
     "rxjs": "6.0.0",
     "stats.js": "^0.17.0",
-    "three": "^0.108.0",
+    "three": "^0.137.0",
     "three-dragcontrols": "^0.88.2",
     "three-full": "^17.1.0",
     "three-orbitcontrols": "^2.108.1",
